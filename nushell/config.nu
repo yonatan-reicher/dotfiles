@@ -22,9 +22,9 @@ let colors = [
 $env.PROMPT_COMMAND = {||
     let c = if (is-admin) { $colors.non-admin } else { $colors.admin }
     let dir = simplify-path $env.PWD | path split | last 3 | path join
-    $"(ansi white)($c.0) ($dir) (ansi white)($c.1) "
+    $"(ansi white)($c.0) ($dir) ($c.1) "
 }
-$env.PROMPT_INDICATOR = $"> (ansi reset) "
+$env.PROMPT_INDICATOR = $"(ansi white)> (ansi reset) "
 
 # aliases
 alias l = ls
