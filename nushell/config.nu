@@ -1,22 +1,31 @@
-# config.nu
-#
-# Installed by:
-# version = "0.108.0"
-#
-# This file is used to override default Nushell settings, define
-# (or import) custom commands, or run any other startup tasks.
-# See https://www.nushell.sh/book/configuration.html
-#
-# Nushell sets "sensible defaults" for most configuration settings, 
-# so your `config.nu` only needs to override these defaults if desired.
-#
-# You can open this file in your default editor using:
-#     config nu
-#
-# You can also pretty-print and page through the documentation for configuration
-# options using:
-#     config nu --doc | nu-highlight | less -R
-
-
+$env.config.show_banner = false
 $env.config.buffer_editor = "nvim"
-$env.config.table.header_on_separator = true;
+$env.config.table.header_on_separator = true
+
+
+def simplify-path [p: path] {
+    (do -i { $p | path relative-to $nu.home-path }) | match $in {
+        null => $p
+        '' => '~'
+        $relative_pwd => ([~ $relative_pwd] | path join)
+    }
+}
+
+
+# prompt
+let colors = [
+    [   index            admin                     non-admin         ];
+    [    pwd,    (ansi { bg: '#283d50' }),  (ansi { bg: '#463d50' }) ],
+    [ indicator, (ansi { bg: '#325078' }),  (ansi { bg: '#645078' }) ],
+]
+
+$env.PROMPT_COMMAND = {||
+    let c = if (is-admin) { $colors.non-admin } else { $colors.admin }
+    let dir = simplify-path $env.PWD | path split | last 3 | path join
+    $"(ansi white)($c.0) ($dir) (ansi white)($c.1) "
+}
+$env.PROMPT_INDICATOR = $"> (ansi reset) "
+
+# aliases
+alias l = ls
+source ../aliases/generated.nu
