@@ -171,5 +171,41 @@ int main(int argc, char* argv[])
         SYS(symlink(targetPath, linkPath));
     }
 
+
+
+    // Source this `profile` file
+    linkPath[0] = targetPath[0] = 0;
+    cwk_path_join(cwd, "profile", targetPath, PATH_MAX);
+    cwk_path_join(getenv("HOME"), ".profile", linkPath, PATH_MAX);
+    if (file_exists(linkPath) && (!file_writeable(linkPath) || !file_readable(linkPath))) {
+        PANIC("Cannot read or write file '%s'.", linkPath);
+    }
+    char lineToAppend[2 * PATH_MAX] = ". ";
+    strcat(lineToAppend + 2, targetPath);
+    FILE* f = fopen(linkPath, "a+");
+    rewind(f);
+    char* line = NULL;
+    size_t len = 0;
+    ssize_t read = 0;
+    bool found = false;
+    while ((read = getline(&line, &len, f)) != -1) {
+        // Remove newline
+         *strchrnul(line, '\n') = 0;
+        if (strcmp(line, lineToAppend) == 0) {
+            found = true;
+            break;
+        }
+    }
+    free(line);
+    if (!found) {
+        printf("Append '%s' to '%s'.\n", lineToAppend, linkPath);
+        fseek(f, 0, SEEK_END);
+        fwrite("\n", 1, 1, f);
+        fwrite(lineToAppend, 1, strlen(lineToAppend), f);
+    } else {
+        WARNING("Skipping updating '%s', '%s' already found.", linkPath, lineToAppend);
+    }
+    fclose(f);
+
     return 0;
 }
