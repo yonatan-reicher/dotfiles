@@ -17,6 +17,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <unistd.h>
 
 /** A library for easier working with path */
@@ -34,6 +36,14 @@
         fprintf(stderr, __VA_ARGS__); \
         fprintf(stderr, "\n"); \
         exit(1); \
+    } while (0)
+
+
+#define WARNING(...) \
+    do { \
+        fprintf(stderr, "[Warning] " __FILE__ " %s %d: ", __func__, __LINE__); \
+        fprintf(stderr, __VA_ARGS__); \
+        fprintf(stderr, "\n"); \
     } while (0)
 
 
@@ -60,6 +70,36 @@ bool str_starts_with(const char* str, const char* prefix) {
         prefix++;
     }
     return true;
+}
+
+
+bool file_exists(const char* path) {
+    return access(path, F_OK) == 0;
+}
+
+
+bool file_readable(const char* path) {
+    return access(path, R_OK) == 0;
+}
+
+
+bool file_writeable(const char* path) {
+    return access(path, W_OK) == 0;
+}
+
+
+void read_link(const char* path, char buffer[PATH_MAX]) {
+    struct stat st;
+    SYS(lstat(path, &st));
+    if (!S_ISLNK(st.st_mode)) {
+        buffer[0] = 0;
+        return;
+    }
+    ssize_t n = readlink(path, buffer, PATH_MAX - 1);
+    if (n == -1) {
+        PANIC("Call readlink(%s) failed with error: %s (code %d).", path, strerror(errno), errno);
+    }
+    buffer[n] = 0;
 }
 
 
@@ -108,6 +148,25 @@ int main(int argc, char* argv[])
         // TODO: Read the link, and check if it is already pointing to the
         // value.
         // Do the linking!
+        if (file_exists(linkPath)) {
+            if (file_readable(linkPath)) {
+                read_link(linkPath, linkValue);
+                if (strcmp(linkValue, "") == 0) {
+                    PANIC("File %s exists and is not a symlink.", linkPath);
+                } else if (strcmp(linkValue, targetPath) == 0) {
+                    WARNING(
+                        "Skipping link %s ↦ %s, already exists.",
+                        linkPath, targetPath
+                    );
+                    continue;
+                } else {
+                    PANIC(
+                        "Link %s already exists and points to %s instead of %s.",
+                        linkPath, linkValue, targetPath
+                    );
+                }
+            }
+        }
         printf("Link %s ↦ %s\n", linkPath, targetPath);
         SYS(symlink(targetPath, linkPath));
     }
