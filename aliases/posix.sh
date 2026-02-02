@@ -1,13 +1,9 @@
 #!/bin/sh
 
-# This script may be invoked by POSIX shells, but also read by non-POSIX shells
-# (such as nushell). Because of that, you should not use any lines of code here
-# that are not either:
-# 1. Blank
-# 2. A '#' comment
-# 3. An `alias <name>=<expr>`
+# This script is intended for POSIX compliant shells only.
 
 # -F is --classify
-alias l='ls -CF'
-alias la='ls -al'
-alias ls='ls -F'
+alias ls='ls -F --color=auto'
+alias la='ls -AF --color=auto'
+alias ll='echo "permission L user group size date  time  name" && ls -AlFh --color=auto'
+alias l='ls -F --color=auto'
