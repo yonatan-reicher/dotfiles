@@ -1,7 +1,6 @@
 let files = [
     'all.sh',
 ]
-let generated = 'generated.nu'
 
 
 def parse-sh-aliases [] : list<string> -> list<string> {
@@ -17,4 +16,5 @@ def parse-sh-aliases [] : list<string> -> list<string> {
 $files
 | each --flatten {|file| open $file | lines}
 | parse-sh-aliases
-| save --force $generated
+| into string
+| str join (char newline)
