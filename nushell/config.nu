@@ -58,4 +58,6 @@ $env.PROMPT_INDICATOR = $"(ansi white)> (ansi reset) "
 
 # aliases
 alias l = ls
+alias la = ls -a
+alias ll = ls -l
 source ../aliases/generated.nu
