@@ -12,5 +12,5 @@ export HISTCONTROL='ignoredups'
 export HISTSIZE=5000
 export HISTFILESIZE=5000
 export LSCOLORS='ExGxbEaECxxEhEhBaDaCaD'
-export PAGER='nvim --clean +Man!'
+export MANPAGER='nvim --clean +Man!'
 export TZ='America/New_York'
