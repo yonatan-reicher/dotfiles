@@ -9,4 +9,9 @@ installer : installer.c cwalk.c
 
 aliases/generated.nu : aliases/generate.nu
 	@# Don't use the config fie... because... we are generating a config file!
-	cd aliases && nu --no-config-file ../$< > ../$@
+	@if type nu >/dev/null 2>/dev/null; then \
+		echo "cd aliases && nu --no-config-file ../$< > ../$@"; \
+		cd aliases && nu --no-config-file ../$< > ../$@; \
+	else \
+		echo "[Warning] Skipping nu configuration (not installed)"; \
+	fi
