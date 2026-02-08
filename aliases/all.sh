@@ -5,8 +5,8 @@
 # 2. A '#' comment
 # 3. An `alias <name>=<expr>`
 
-alias git-graph='git log --graph --oneline --all --decorate'
+alias g='git'
 alias gs='git status'
-alias ngit='nvim -c ":G | :on"'
+alias ng='nvim -c ":G | :on"'
 alias v='nvim'
 alias grep='grep --color=auto'

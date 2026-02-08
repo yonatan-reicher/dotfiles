@@ -1,0 +1,27 @@
+# This is Git's per-user configuration file.
+[user]
+    name = Jonathan Reicher
+    email = yony252525@gmail.com
+
+[color]
+    ui = auto
+
+[push]
+    default = simple
+    autoSetupRemote = true
+
+[alias]
+    # Listing things
+    branches = branch -a
+    tags = tag
+    stashes = stash list
+    remotes = remote -v
+    # Changes
+    unstage = reset HEAD --
+    # Undo last commit
+    uncommit = reset --mixed HEAD~
+    amend = commit --amend --no-edit
+    # Graph
+    graph = log --graph --branches --remotes --tags --decorate --date-order --oneline
+
+    unmerged = diff --name-only --diff-filter=U

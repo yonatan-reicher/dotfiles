@@ -125,6 +125,7 @@ const LinkEntry files[] = {
     { "~/.config/aliases", "./aliases" },
     { "~/.config/nushell", "./nushell" },
     { "~/.bashrc", "./bashrc" },
+    { "~/.config/git/config", "./gitconfig" },
 };
 #define N_FILES ARRAY_LENGTH(files)
 
@@ -181,7 +182,23 @@ int main(int argc, char* argv[])
         SYS(symlink(targetPath, linkPath));
     }
 
-
+    // Unlink bad file
+    linkPath[0] = 0;
+    cwk_path_join(getenv("HOME"), ".gitconfig", linkPath, PATH_MAX);
+    if (file_exists(linkPath)) {
+        printf("This system has a '%s' file. Would you like to remove it? (y/n) ", linkPath);
+        fflush(stdout);
+        int c = 0;
+        do {
+            c = getchar();
+            if (c == EOF) {
+                PANIC("unexpected end of input");
+            }
+        } while (c != 'y' && c != 'n');
+        if (c == 'y') {
+            SYS(unlink(linkPath));
+        }
+    }
 
     // Source this `profile` file
     linkPath[0] = targetPath[0] = 0;
