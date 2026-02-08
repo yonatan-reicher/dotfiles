@@ -7,7 +7,7 @@ all : aliases/generated.nu installer
 installer : installer.c cwalk.c
 	gcc $(C_FLAGS) -g -o $@ $^
 
-aliases/generated.nu : aliases/generate.nu
+aliases/generated.nu : aliases/generate.nu aliases/all.sh
 	@# Don't use the config fie... because... we are generating a config file!
 	@if type nu >/dev/null 2>/dev/null; then \
 		echo "cd aliases && nu --no-config-file ../$< > ../$@"; \
