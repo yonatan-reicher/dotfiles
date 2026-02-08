@@ -103,6 +103,16 @@ void read_link(const char* path, char buffer[PATH_MAX]) {
 }
 
 
+void remove_newline_character(char* str) {
+    for (; *str != 0; str++) {
+        if (*str == '\n') {
+            *str = 0;
+            return;
+        }
+    }
+}
+
+
 /** An entry in a table of files to symlink. */
 typedef struct LinkEntry {
     const char linkPath[PATH_MAX];
@@ -189,8 +199,7 @@ int main(int argc, char* argv[])
     ssize_t read = 0;
     bool found = false;
     while ((read = getline(&line, &len, f)) != -1) {
-        // Remove newline
-         *strchrnul(line, '\n') = 0;
+        remove_newline_character(line);
         if (strcmp(line, lineToAppend) == 0) {
             found = true;
             break;
