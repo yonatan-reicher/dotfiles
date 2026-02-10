@@ -25,6 +25,7 @@
     tags = tag
     stashes = stash list
     remotes = remote -v
+    unmerged = diff --name-only --diff-filter=U
     # Changes
     unstage = reset HEAD --
     # Undo last commit
@@ -32,5 +33,10 @@
     amend = commit --amend --no-edit
     # Graph
     graph = log --graph --branches --remotes --tags --decorate --date-order --oneline
-
-    unmerged = diff --name-only --diff-filter=U
+    # Branches
+    fast-forward = pull --ff-only
+    # Adding
+    # Lines starting with "!" execute shell commands. We use it to run
+    # multiple git commands, and to take arguments.
+    commit-add = "!f() { git add $1 && git commit -m \"add $1\"; }; f"
+    commit-update = "!f() { git add $1 && git commit -m \"update $1\"; }; f"
