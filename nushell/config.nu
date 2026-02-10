@@ -50,7 +50,7 @@ def generate-colors [ admin: list<float>, non_admin: list<float> ] : nothing -> 
 let colors = generate-colors $colors.admin $colors.non-admin
 
 $env.PROMPT_COMMAND = {||
-    let c = if (is-admin) { $colors.non-admin } else { $colors.admin }
+    let c = if (is-admin) { $colors.admin } else { $colors.non-admin }
     let dir = simplify-path $env.PWD | path split | last 3 | path join
     $"(ansi white)($c.0) ($dir) ($c.1) "
 }
