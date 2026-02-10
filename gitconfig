@@ -3,8 +3,17 @@
     name = Jonathan Reicher
     email = yony252525@gmail.com
 
+[core]
+    editor = nvim
+
 [color]
     ui = auto
+
+[credential]
+    helper = store
+
+[init]
+    defaultBranch = main
 
 [push]
     default = simple
