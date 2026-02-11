@@ -19,6 +19,12 @@
     default = simple
     autoSetupRemote = true
 
+[pull]
+    ff = only
+
+[merge]
+    ff = false
+
 [alias]
     # Listing things
     branches = branch -a
