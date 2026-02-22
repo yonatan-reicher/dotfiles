@@ -7,6 +7,6 @@
 
 alias g='git'
 alias gs='git status'
-alias ng='nvim -c ":G | :on"'
+alias vg='nvim -c ":G | :on"'
 alias v='nvim'
 alias grep='grep --color=auto'
