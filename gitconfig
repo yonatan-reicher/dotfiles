@@ -31,7 +31,10 @@
     tags = tag
     stashes = stash list
     remotes = remote -v
-    unmerged = diff --name-only --diff-filter=U
+    unmerged-files = diff --name-only --diff-filter=U
+    unpushed = log --branches --not --remotes --no-walk "--format=%(decorate:prefix=,suffix=,pointer=%n,separator=%n)"
+    unmerged = branch --no-merged
+    merged = branch --merged
     # Changes
     unstage = reset HEAD --
     change-message = commit --amend
