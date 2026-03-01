@@ -32,7 +32,7 @@
     stashes = stash list
     remotes = remote -v
     unmerged-files = diff --name-only --diff-filter=U
-    unpushed = log --branches --not --remotes --no-walk "--format=%(decorate:prefix=,suffix=,pointer=%n,separator=%n)"
+    unpushed = log --branches --not --remotes --no-walk --oneline
     unmerged = branch --no-merged
     merged = branch --merged
     # Changes
