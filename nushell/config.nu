@@ -57,7 +57,7 @@ $env.PROMPT_COMMAND = {||
 $env.PROMPT_INDICATOR = $"(ansi white)> (ansi reset) "
 
 # aliases
-alias l = ls
-alias la = ls -a
-alias ll = ls -l
+def l [path: glob = .] : nothing -> table { ls -m $path | sort-by type }
+alias la = ls -m -a
+alias ll = ls -m -l
 source ../aliases/generated.nu
