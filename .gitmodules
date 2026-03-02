@@ -1,0 +1,3 @@
+[submodule "jrc"]
+	path = jrc
+	url = ../jrc.git
