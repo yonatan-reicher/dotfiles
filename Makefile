@@ -4,8 +4,8 @@ C_FLAGS = -Wextra -Wall -Wfloat-equal -Wundef -Wshadow -Wpointer-arith -Wcast-al
 all : aliases/generated.nu installer
 	./installer
 
-installer : installer.c cwalk.c
-	gcc $(C_FLAGS) -g -o $@ $^
+installer : installer.c cwalk.c jrc/src/*.c jrc/src/*.h
+	gcc $(C_FLAGS) -g -o $@ $(filter %.c,$^)
 
 aliases/generated.nu : aliases/generate.nu aliases/all.sh
 	@# Don't use the config fie... because... we are generating a config file!

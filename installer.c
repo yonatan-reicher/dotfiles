@@ -21,31 +21,11 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+#include "jrc/src/basic.h"
+#include "jrc/src/string.h"
+
 /** A library for easier working with path */
 #include "cwalk.h"
-
-
-/** Mark a variable as unused */
-#define UNUSED(X) (void)(X)
-
-
-/** Hard failure with an error message */
-#define PANIC(...) \
-    do { \
-        fprintf(stderr, "[Error] " __FILE__ " %s %d: ", __func__, __LINE__); \
-        fprintf(stderr, __VA_ARGS__); \
-        fprintf(stderr, "\n"); \
-        exit(1); \
-    } while (0)
-
-
-#define WARNING(...) \
-    do { \
-        fprintf(stderr, "[Warning] " __FILE__ " %s %d: ", __func__, __LINE__); \
-        fprintf(stderr, __VA_ARGS__); \
-        fprintf(stderr, "\n"); \
-    } while (0)
-
 
 /** Make a syscall and fail if it returned -1. */
 #define SYS(E) \
@@ -58,19 +38,6 @@
     if ((E) == 0) { \
         PANIC("Call " #E " failed."); \
     }
-
-
-#define ARRAY_LENGTH(A) (sizeof(A) / sizeof((A)[0]))
-
-
-bool str_starts_with(const char* str, const char* prefix) {
-    while (prefix[0] != 0) {
-        if (str[0] != prefix[0]) return false;
-        str++;
-        prefix++;
-    }
-    return true;
-}
 
 
 bool file_exists(const char* path) {
@@ -103,16 +70,6 @@ void read_link(const char* path, char buffer[PATH_MAX]) {
 }
 
 
-void remove_newline_character(char* str) {
-    for (; *str != 0; str++) {
-        if (*str == '\n') {
-            *str = 0;
-            return;
-        }
-    }
-}
-
-
 /** An entry in a table of files to symlink. */
 typedef struct LinkEntry {
     const char linkPath[PATH_MAX];
@@ -127,7 +84,7 @@ const LinkEntry files[] = {
     { "~/.bashrc", "./bashrc" },
     { "~/.config/git/config", "./gitconfig" },
 };
-#define N_FILES ARRAY_LENGTH(files)
+#define N_FILES ARRAY_LEN(files)
 
 
 int main(int argc, char* argv[])
@@ -216,7 +173,7 @@ int main(int argc, char* argv[])
     ssize_t read = 0;
     bool found = false;
     while ((read = getline(&line, &len, f)) != -1) {
-        remove_newline_character(line);
+        str_remove_newline(line);
         if (strcmp(line, lineToAppend) == 0) {
             found = true;
             break;
