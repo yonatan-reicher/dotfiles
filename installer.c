@@ -22,7 +22,7 @@
 #include <unistd.h>
 
 #include "jrc/src/basic.h"
-#include "jrc/src/string.h"
+#include "jrc/src/str.h"
 
 /** A library for easier working with path */
 #include "cwalk.h"
