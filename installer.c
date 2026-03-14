@@ -82,7 +82,10 @@ const LinkEntry files[] = {
     { "~/.config/aliases", "./aliases" },
     { "~/.config/nushell", "./nushell" },
     { "~/.bashrc", "./bashrc" },
+    { "~/.bash_profile", "./bash_profile" },
     { "~/.config/git/config", "./gitconfig" },
+    { "~/.config/kitty", "./kitty" },
+    { "~/.config/nvim", "./nvim" },
 };
 #define N_FILES ARRAY_LEN(files)
 
