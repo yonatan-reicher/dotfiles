@@ -4,6 +4,9 @@ C_FLAGS = -Wextra -Wall -Wfloat-equal -Wundef -Wshadow -Wpointer-arith -Wcast-al
 all : aliases/generated.nu installer
 	./installer
 
+jrc/% :
+	git submodule update --init --recursive -- jrc
+
 installer : installer.c cwalk.c jrc/src/*.c jrc/src/*.h
 	gcc $(C_FLAGS) -g -o $@ $(filter %.c,$^)
 
