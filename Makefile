@@ -1,8 +1,11 @@
 C_FLAGS = -Wextra -Wall -Wfloat-equal -Wundef -Wshadow -Wpointer-arith -Wcast-align -Wstrict-prototypes -Wstrict-overflow=5 -Wwrite-strings -Waggregate-return -Wcast-qual -Wswitch-default -Wswitch-enum -Wconversion -Wunreachable-code
 
 .PHONY : all
-all : aliases/generated.nu installer
+all : aliases/generated.nu nvim installer
 	./installer
+
+nvim :
+	git submodule update --init --recursive -- nvim
 
 jrc/% :
 	git submodule update --init --recursive -- jrc
