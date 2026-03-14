@@ -1,3 +1,6 @@
 [submodule "jrc"]
 	path = jrc
 	url = ../jrc.git
+[submodule "nvim"]
+	path = nvim
+	url = ../init.lua.git
