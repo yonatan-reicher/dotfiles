@@ -7,6 +7,7 @@ export XDG_DATA_DIRS=/usr/local/share:/usr/share
 # export XDG_CONFIG_DIRS=/etc/xdg
 export EDITOR='nvim'
 export VISUAL='nvim'
+export TERMINAL='kitty'
 export GREP_COLOR='1;36'
 export HISTCONTROL='ignoredups'
 export HISTSIZE=5000
