@@ -26,6 +26,9 @@
     ff = false
 
 [alias]
+    # Short-hands
+    s = status
+    f = fetch --all
     # Listing things
     branches = branch -a
     tags = tag
