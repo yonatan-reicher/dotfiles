@@ -22,16 +22,11 @@
 #include <unistd.h>
 
 #include "jrc/src/basic.h"
+#include "jrc/src/path.h"
 #include "jrc/src/str.h"
 
 /** A library for easier working with path */
 #include "cwalk.h"
-
-/** Make a syscall and fail if it returned -1. */
-#define SYS(E) \
-    if ((E) == -1) { \
-        PANIC("Call " #E " failed with error: %s (code %d).", strerror(errno), errno); \
-    }
 
 /** Make a function call and fail if it returned a 0-value (NULL). */
 #define NONZERO(E) \
@@ -40,18 +35,27 @@
     }
 
 
-bool file_exists(const char* path) {
-    return access(path, F_OK) == 0;
+bool file_exists(const Path *path) {
+    char *str = path_to_str(path);
+    bool ret = access(str, F_OK) == 0;
+    free(str);
+    return ret;
 }
 
 
-bool file_readable(const char* path) {
-    return access(path, R_OK) == 0;
+bool file_readable(const Path *path) {
+    char *str = path_to_str(path);
+    bool ret = access(str, R_OK) == 0;
+    free(str);
+    return ret;
 }
 
 
-bool file_writeable(const char* path) {
-    return access(path, W_OK) == 0;
+bool file_writeable(const Path *path) {
+    char *str = path_to_str(path);
+    bool ret = access(str, W_OK) == 0;
+    free(str);
+    return ret;
 }
 
 
@@ -95,25 +99,22 @@ int main(int argc, char* argv[])
     UNUSED(argc);
     UNUSED(argv);
 
-    char cwd[PATH_MAX];
-    char linkPath[PATH_MAX];
+    Path cwd = path_cwd();
+    Path home = path_parse(getenv("HOME"));
+    Path link = path_empty(), target = path_empty();
     char linkValue[PATH_MAX];
-    char targetPath[PATH_MAX];
-
-    // Initialize cwd.
-    NONZERO(getcwd(cwd, PATH_MAX));
 
     // Link all the files in the table.
     for (size_t i = 0; i < N_FILES; i++) {
         const LinkEntry* e = &files[i];
 
         // Initialize the buffers above.
-        linkPath[0] = targetPath[0] = 0;
-        cwk_path_join(cwd, e->targetPath, targetPath, PATH_MAX);
+        path_free(&link); path_free(&target);
+        target = path_concat(&path_clone(&cwd), &path_parse(e->targetPath));
         if (str_starts_with(e->linkPath, "~/")) {
-            cwk_path_join(getenv("HOME"), e->linkPath + 2, linkPath, PATH_MAX);
+            link = path_concat(&path_clone(&home), &path_parse(e->linkPath + 2));
         } else {
-            cwk_path_join(cwd, e->linkPath, linkPath, PATH_MAX);
+            link = path_concat(&path_clone(&cwd), &path_parse(e->linkPath));
         }
 
         // TODO: Read the link, and check if it is already pointing to the
