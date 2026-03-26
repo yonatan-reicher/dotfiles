@@ -1,0 +1,3 @@
+file_exists
+file_readable
+file_writeable
