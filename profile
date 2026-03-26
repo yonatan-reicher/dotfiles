@@ -14,4 +14,3 @@ export HISTSIZE=5000
 export HISTFILESIZE=5000
 export LSCOLORS='ExGxbEaECxxEhEhBaDaCaD'
 export MANPAGER='nvim --clean +Man!'
-export TZ='America/New_York'
