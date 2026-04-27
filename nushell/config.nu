@@ -62,7 +62,14 @@ alias la = ls -m -a
 alias ll = ls -m -l
 source ../aliases/generated.nu
 
-source $"($nu.home-path)/.cargo/env.nu"
+const cargo_env_path = "~/.cargo/env.nu" | path expand
+source (
+  if ($cargo_env_path | path exists) {
+    $cargo_env_path
+  } else {
+    "/dev/null"
+  }
+)
 
 def "firefox file" [ file: path ] : nothing -> nothing {
     firefox file://($file | path expand | str replace " " "%20")
