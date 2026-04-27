@@ -61,3 +61,9 @@ def l [path: glob = .] : nothing -> table { ls -m $path | sort-by type }
 alias la = ls -m -a
 alias ll = ls -m -l
 source ../aliases/generated.nu
+
+source $"($nu.home-path)/.cargo/env.nu"
+
+def "firefox file" [ file: path ] : nothing -> nothing {
+    firefox file://($file | path expand | str replace " " "%20")
+}
