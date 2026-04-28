@@ -12,6 +12,9 @@
 [credential]
     helper = store
 
+[diff]
+    external = difft --display=inline
+
 [init]
     defaultBranch = main
 
