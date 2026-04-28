@@ -20,3 +20,6 @@ folder. It would also be nice to have a "bare-bones" neovim configuration, for
 when you are in a machine that does not have enough space or has an old neovim
 version, or is missing some critical tools. Need to benchmark the space that the
 repo takes with all the submodules and see if it's worth it.
+
+Move gitconfig to git/config, I think this way neovim will show us syntax
+highlighting for the file.
