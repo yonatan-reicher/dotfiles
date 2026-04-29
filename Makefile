@@ -10,7 +10,7 @@ nvim :
 jrc/% :
 	git submodule update --init --recursive -- jrc
 
-installer : installer.c cwalk.c jrc/src/*.c jrc/src/*.h
+installer : installer.c jrc/src/*.c jrc/src/*.h
 	gcc $(C_FLAGS) -g -o $@ $(filter %.c,$^)
 
 aliases/generated.nu : aliases/generate.nu aliases/all.sh

@@ -25,9 +25,6 @@
 #include "jrc/src/path.h"
 #include "jrc/src/str.h"
 
-/** A library for easier working with path */
-#include "cwalk.h"
-
 /** Make a function call and fail if it returned a 0-value (NULL). */
 #define NONZERO(E) \
     if ((E) == 0) { \
@@ -110,44 +107,53 @@ int main(int argc, char* argv[])
 
         // Initialize the buffers above.
         path_free(&link); path_free(&target);
-        target = path_concat(&path_clone(&cwd), &path_parse(e->targetPath));
+        target = path_concat(path_clone(&cwd), path_parse(e->targetPath));
         if (str_starts_with(e->linkPath, "~/")) {
-            link = path_concat(&path_clone(&home), &path_parse(e->linkPath + 2));
+            link = path_concat(path_clone(&home), path_parse(e->linkPath + 2));
         } else {
-            link = path_concat(&path_clone(&cwd), &path_parse(e->linkPath));
+            link = path_concat(path_clone(&cwd), path_parse(e->linkPath));
         }
 
         // TODO: Read the link, and check if it is already pointing to the
         // value.
         // Do the linking!
-        if (file_exists(linkPath)) {
-            if (file_readable(linkPath)) {
-                read_link(linkPath, linkValue);
+        char *link_str = path_to_str(&link);
+        char *target_str = path_to_str(&target);
+        if (file_exists(&link)) {
+            if (file_readable(&link)) {
+                read_link(link_str, linkValue);
                 if (strcmp(linkValue, "") == 0) {
-                    PANIC("File %s exists and is not a symlink.", linkPath);
-                } else if (strcmp(linkValue, targetPath) == 0) {
+                    PANIC("File %s exists and is not a symlink.", link_str);
+                } else if (strcmp(linkValue, target_str) == 0) {
                     WARNING(
                         "Skipping link %s ↦ %s, already exists.",
-                        linkPath, targetPath
+                        link_str, target_str
                     );
+                    free(link_str);
+                    free(target_str);
                     continue;
                 } else {
                     PANIC(
                         "Link %s already exists and points to %s instead of %s.",
-                        linkPath, linkValue, targetPath
+                        link_str, linkValue, target_str
                     );
                 }
             }
         }
-        printf("Link %s ↦ %s\n", linkPath, targetPath);
-        SYS(symlink(targetPath, linkPath));
+        printf("Link %s ↦ %s\n", link_str, target_str);
+        SYS(symlink(target_str, link_str));
+        free(link_str);
+        free(target_str);
+        path_free(&link);
+        path_free(&target);
     }
 
     // Unlink bad file
-    linkPath[0] = 0;
-    cwk_path_join(getenv("HOME"), ".gitconfig", linkPath, PATH_MAX);
-    if (file_exists(linkPath)) {
-        printf("This system has a '%s' file. Would you like to remove it? (y/n) ", linkPath);
+    path_append(&link, path_clone(&home));
+    path_add(&link, str_clone(".gitconfig"));
+    char* link_str = path_to_str(&link);
+    if (file_exists(&link)) {
+        printf("This system has a '%s' file. Would you like to remove it? (y/n) ", link_str);
         fflush(stdout);
         int c = 0;
         do {
@@ -157,20 +163,27 @@ int main(int argc, char* argv[])
             }
         } while (c != 'y' && c != 'n');
         if (c == 'y') {
-            SYS(unlink(linkPath));
+            SYS(unlink(link_str));
         }
     }
+    free(link_str);
+    path_free(&link);
 
     // Source this `profile` file
-    linkPath[0] = targetPath[0] = 0;
-    cwk_path_join(cwd, "profile", targetPath, PATH_MAX);
-    cwk_path_join(getenv("HOME"), ".profile", linkPath, PATH_MAX);
-    if (file_exists(linkPath) && (!file_writeable(linkPath) || !file_readable(linkPath))) {
-        PANIC("Cannot read or write file '%s'.", linkPath);
+    path_append(&target, path_clone(&cwd));
+    path_add(&target, str_clone("profile"));
+    path_append(&link, path_clone(&home));
+    path_add(&link, str_clone(".profile"));
+    if (file_exists(&link) && (!file_writeable(&link) || !file_readable(&link))) {
+        link_str = path_to_str(&link);
+        PANIC("Cannot read or write file '%s'.", link_str);
     }
-    char lineToAppend[2 * PATH_MAX] = ". ";
-    strcat(lineToAppend + 2, targetPath);
-    FILE* f = fopen(linkPath, "a+");
+    char* target_str = path_to_str(&target);
+    link_str = path_to_str(&link);
+    char* line_to_append = malloc(2 + strlen(target_str));
+    strcat(line_to_append, ". ");
+    strcat(line_to_append + 2, target_str);
+    FILE* f = fopen(link_str, "a+");
     rewind(f);
     char* line = NULL;
     size_t len = 0;
@@ -178,19 +191,19 @@ int main(int argc, char* argv[])
     bool found = false;
     while ((read = getline(&line, &len, f)) != -1) {
         str_remove_newline(line);
-        if (strcmp(line, lineToAppend) == 0) {
+        if (str_eq(line, line_to_append)) {
             found = true;
             break;
         }
     }
     free(line);
     if (!found) {
-        printf("Append '%s' to '%s'.\n", lineToAppend, linkPath);
+        printf("Append '%s' to '%s'.\n", line_to_append, link_str);
         fseek(f, 0, SEEK_END);
         fwrite("\n", 1, 1, f);
-        fwrite(lineToAppend, 1, strlen(lineToAppend), f);
+        fwrite(line_to_append, 1, strlen(line_to_append), f);
     } else {
-        WARNING("Skipping updating '%s', '%s' already found.", linkPath, lineToAppend);
+        WARNING("Skipping updating '%s', '%s' already found.", link_str, line_to_append);
     }
     fclose(f);
 
