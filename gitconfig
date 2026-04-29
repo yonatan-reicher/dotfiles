@@ -13,7 +13,7 @@
     helper = store
 
 [diff]
-    external = difft --display=inline
+    external = difft
 
 [init]
     defaultBranch = main
