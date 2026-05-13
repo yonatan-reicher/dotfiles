@@ -37,8 +37,8 @@ def "color str" [ colors: list<float> ] : nothing -> string {
 
 # prompt
 let colors = {
-    admin:      (color 0x42 0x7d 0xdb)
-    non-admin:  (color 0x32 0x50 0x78)
+    admin:      (color 0x72 0x7d 0xdb)
+    non-admin:  (color (random int 100..200) (random int 50..150) (random int 100..200))
 }
 def generate-colors [ admin: list<float>, non_admin: list<float> ] : nothing -> table {
     [
