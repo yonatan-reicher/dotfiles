@@ -1,4 +1,5 @@
-C_FLAGS = -Wextra -Wall -Wfloat-equal -Wundef -Wshadow -Wpointer-arith -Wcast-align -Wstrict-prototypes -Wstrict-overflow=5 -Wwrite-strings -Wcast-qual -Wswitch-default -Wswitch-enum -Wconversion -Wunreachable-code
+C_FLAGS = -Wextra -Wall -Wfloat-equal -Wundef -Wshadow -Wpointer-arith -Wcast-align -Wstrict-prototypes -Wstrict-overflow=5 -Wwrite-strings -Wcast-qual -Wswitch-default -Wswitch-enum -Wconversion -Wunreachable-code \
+	-Ijrc/include
 
 .PHONY : all
 all : aliases/generated.nu nvim installer
@@ -7,10 +8,10 @@ all : aliases/generated.nu nvim installer
 nvim :
 	git submodule update --init --recursive -- nvim
 
-jrc/% :
-	git submodule update --init --recursive -- jrc
+# jrc/% :
+# 	git submodule update --init --recursive -- jrc
 
-installer : installer.c jrc/src/*.c jrc/src/*.h
+installer : installer.c jrc/src/*.c jrc/include/*.h
 	gcc $(C_FLAGS) -g -o $@ $(filter %.c,$^)
 
 aliases/generated.nu : aliases/generate.nu aliases/all.sh
