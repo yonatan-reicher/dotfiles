@@ -107,13 +107,8 @@ int main(int argc, char* argv[])
 
         // Initialize the buffers above.
         path_free(&link); path_free(&target);
-        target = path_concat(path_clone(&cwd), path_parse(e->targetPath));
-        if (str_starts_with(e->linkPath, "~/")) {
-            link = path_concat(path_clone(&home), path_parse(e->linkPath + 2));
-        } else {
-            link = path_concat(path_clone(&cwd), path_parse(e->linkPath));
-        }
-
+        target = path_expand(path_parse(e->targetPath));
+        link = path_expand(path_parse(e->linkPath));
         // TODO: Read the link, and check if it is already pointing to the
         // value.
         // Do the linking!
@@ -170,10 +165,8 @@ int main(int argc, char* argv[])
     path_free(&link);
 
     // Source this `profile` file
-    path_append(&target, path_clone(&cwd));
-    path_add(&target, str_clone("profile"));
-    path_append(&link, path_clone(&home));
-    path_add(&link, str_clone(".profile"));
+    target = path_expand(path_parse("./profile"));
+    link = path_expand(path_parse("~/.profile"));
     if (file_exists(&link) && (!file_writeable(&link) || !file_readable(&link))) {
         link_str = path_to_str(&link);
         PANIC("Cannot read or write file '%s'.", link_str);
