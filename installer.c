@@ -21,9 +21,9 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-#include "jrc/src/basic.h"
-#include "jrc/src/path.h"
-#include "jrc/src/str.h"
+#include "jrc/include/basic.h"
+#include "jrc/include/path.h"
+#include "jrc/include/str.h"
 
 /** Make a function call and fail if it returned a 0-value (NULL). */
 #define NONZERO(E) \
