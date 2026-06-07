@@ -86,7 +86,7 @@ const LinkEntry files[] = {
     { "~/.bash_profile", "./bash_profile" },
     { "~/.config/git/config", "./gitconfig" },
     { "~/.config/kitty", "./kitty" },
-    { "~/.config/nvim", "./nvim" },
+    // { "~/.config/nvim", "./nvim" },
 };
 #define N_FILES ARRAY_LEN(files)
 
@@ -174,6 +174,7 @@ int main(int argc, char* argv[])
     char* target_str = path_to_str(&target);
     link_str = path_to_str(&link);
     char* line_to_append = malloc(2 + strlen(target_str));
+    line_to_append[0] = 0;
     strcat(line_to_append, ". ");
     strcat(line_to_append + 2, target_str);
     FILE* f = fopen(link_str, "a+");
