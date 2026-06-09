@@ -12,9 +12,6 @@
 [credential]
     helper = store
 
-[diff]
-    external = difft
-
 [init]
     defaultBranch = main
 
@@ -58,3 +55,7 @@
     # multiple git commands, and to take arguments.
     commit-add = "!f() { git add $1 && git commit -m \"add $1\"; }; f"
     commit-update = "!f() { git add $1 && git commit -m \"update $1\"; }; f"
+    # Difftastic aliases
+    difft = -c diff.external=difft diff
+    logt = -c diff.external=difft log --ext-diff # notice that you need to pass the -p flag to actually see the diffs in the log
+    showt = -c diff.external=difft show --ext-diff
