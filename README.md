@@ -6,11 +6,6 @@ on GitHub).
 Supports an install script written in C that can be ran with `make`. In the
 future, might support Windows, for now only Mac and Linux.
 
-## Currently Working On
-
-Removing "cwalk" and switching it with an implementation of my own.
-Documenting this code.
-
 ## TODO
 
 Nicer logging from the installer.
@@ -23,3 +18,5 @@ repo takes with all the submodules and see if it's worth it.
 
 Move gitconfig to git/config, I think this way neovim will show us syntax
 highlighting for the file.
+
+Generate kitty.conf
