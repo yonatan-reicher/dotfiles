@@ -12,7 +12,7 @@ nvim :
 # jrc/% :
 # 	git submodule update --init --recursive -- jrc
 
-jrc/lib/debug/libjrc.a :
+jrc/lib/debug/libjrc.a : jrc/*
 	cd jrc && make debug
 
 installer : installer.c jrc/include/*.h jrc/lib/debug/libjrc.a
