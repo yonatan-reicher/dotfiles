@@ -32,30 +32,6 @@
     }
 
 
-bool file_exists(const Path *path) {
-    char *str = path_to_str(path);
-    bool ret = access(str, F_OK) == 0;
-    free(str);
-    return ret;
-}
-
-
-bool file_readable(const Path *path) {
-    char *str = path_to_str(path);
-    bool ret = access(str, R_OK) == 0;
-    free(str);
-    return ret;
-}
-
-
-bool file_writeable(const Path *path) {
-    char *str = path_to_str(path);
-    bool ret = access(str, W_OK) == 0;
-    free(str);
-    return ret;
-}
-
-
 void read_link(const char* path, char buffer[PATH_MAX]) {
     struct stat st;
     SYS(lstat(path, &st));
@@ -114,8 +90,8 @@ int main(int argc, char* argv[])
         // Do the linking!
         char *link_str = path_to_str(&link);
         char *target_str = path_to_str(&target);
-        if (file_exists(&link)) {
-            if (file_readable(&link)) {
+        if (path_exists(&link)) {
+            if (path_readable(&link)) {
                 read_link(link_str, linkValue);
                 if (strcmp(linkValue, "") == 0) {
                     PANIC("File %s exists and is not a symlink.", link_str);
@@ -147,7 +123,7 @@ int main(int argc, char* argv[])
     path_append(&link, path_clone(&home));
     path_add(&link, str_clone(".gitconfig"));
     char* link_str = path_to_str(&link);
-    if (file_exists(&link)) {
+    if (path_exists(&link)) {
         printf("This system has a '%s' file. Would you like to remove it? (y/n) ", link_str);
         fflush(stdout);
         int c = 0;
@@ -167,7 +143,7 @@ int main(int argc, char* argv[])
     // Source this `profile` file
     target = path_expand(path_parse("./profile"));
     link = path_expand(path_parse("~/.profile"));
-    if (file_exists(&link) && (!file_writeable(&link) || !file_readable(&link))) {
+    if (path_exists(&link) && (!path_writable(&link) || !path_readable(&link))) {
         link_str = path_to_str(&link);
         PANIC("Cannot read or write file '%s'.", link_str);
     }
