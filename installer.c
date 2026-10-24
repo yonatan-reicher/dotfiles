@@ -59,25 +59,20 @@ int main(int argc, char* argv[])
     UNUSED(argc);
     UNUSED(argv);
 
-    Path link = path_empty(), target = path_empty();
-    Path link_value = path_empty();
-
     // Link all the files in the table.
     for (size_t i = 0; i < N_FILES; i++) {
         const LinkEntry* e = &files[i];
 
-        // Initialize the buffers above.
-        path_free(&link); path_free(&target);
-        target = path_expand(path_parse(e->targetPath));
-        link = path_expand(path_parse(e->linkPath));
-        // TODO: Read the link, and check if it is already pointing to the
-        // value.
-        // Do the linking!
+        // Convert to path objects.
+        Path target = path_expand(path_parse(e->targetPath));
+        Path link = path_expand(path_parse(e->linkPath));
+        // Read the link, and check if it is already pointing to the value. Do
+        // the linking!
         char *link_str = path_to_str(&link);
         char *target_str = path_to_str(&target);
         if (path_exists(&link)) {
             if (path_readable(&link)) {
-                link_value = path_read_link(&link);
+                Path link_value = path_read_link(&link);
                 if (path_is_empty(&link_value)) {
                     PANIC("File %s exists and is not a symlink.", link_str);
                 } else if (path_eq(&link_value, &target)) {
@@ -87,6 +82,7 @@ int main(int argc, char* argv[])
                     );
                     free(link_str);
                     free(target_str);
+                    path_free(&link_value);
                     continue;
                 } else {
                     PANIC(
@@ -105,7 +101,7 @@ int main(int argc, char* argv[])
     }
 
     // Unlink bad file
-    path_append(&link, path_home());
+    Path link = path_home();
     path_add(&link, str_clone(".gitconfig"));
     char* link_str = path_to_str(&link);
     if (path_exists(&link)) {
@@ -126,7 +122,7 @@ int main(int argc, char* argv[])
     path_free(&link);
 
     // Source this `profile` file
-    target = path_expand(path_parse("./profile"));
+    Path target = path_expand(path_parse("./profile"));
     link = path_expand(path_parse("~/.profile"));
     if (path_exists(&link) && (!path_writable(&link) || !path_readable(&link))) {
         link_str = path_to_str(&link);
