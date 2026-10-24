@@ -34,7 +34,9 @@
 
 /** An entry in a table of files to symlink. */
 typedef struct LinkEntry {
+    /// The link to create.
     const char linkPath[PATH_MAX];
+    /// The path the link will be targeting.
     const char targetPath[PATH_MAX];
 } LinkEntry;
 
