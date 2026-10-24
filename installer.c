@@ -32,21 +32,6 @@
     }
 
 
-void read_link(const char* path, char buffer[PATH_MAX]) {
-    struct stat st;
-    SYS(lstat(path, &st));
-    if (!S_ISLNK(st.st_mode)) {
-        buffer[0] = 0;
-        return;
-    }
-    ssize_t n = readlink(path, buffer, PATH_MAX - 1);
-    if (n == -1) {
-        PANIC("Call readlink(%s) failed with error: %s (code %d).", path, strerror(errno), errno);
-    }
-    buffer[n] = 0;
-}
-
-
 /** An entry in a table of files to symlink. */
 typedef struct LinkEntry {
     const char linkPath[PATH_MAX];
