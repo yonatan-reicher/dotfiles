@@ -57,7 +57,6 @@ int main(int argc, char* argv[])
     UNUSED(argc);
     UNUSED(argv);
 
-    Path home = path_home();
     Path link = path_empty(), target = path_empty();
     Path linkValue = path_empty();
 
@@ -104,7 +103,7 @@ int main(int argc, char* argv[])
     }
 
     // Unlink bad file
-    path_append(&link, path_clone(&home));
+    path_append(&link, path_home());
     path_add(&link, str_clone(".gitconfig"));
     char* link_str = path_to_str(&link);
     if (path_exists(&link)) {
