@@ -75,7 +75,7 @@ int main(int argc, char* argv[])
     Path cwd = path_cwd();
     Path home = path_parse(getenv("HOME"));
     Path link = path_empty(), target = path_empty();
-    char linkValue[PATH_MAX];
+    Path linkValue = path_empty();
 
     // Link all the files in the table.
     for (size_t i = 0; i < N_FILES; i++) {
@@ -92,10 +92,10 @@ int main(int argc, char* argv[])
         char *target_str = path_to_str(&target);
         if (path_exists(&link)) {
             if (path_readable(&link)) {
-                read_link(link_str, linkValue);
-                if (strcmp(linkValue, "") == 0) {
+                linkValue = path_read_link(&link);
+                if (path_is_empty(&linkValue)) {
                     PANIC("File %s exists and is not a symlink.", link_str);
-                } else if (strcmp(linkValue, target_str) == 0) {
+                } else if (path_eq(&linkValue, &target)) {
                     WARNING(
                         "Skipping link %s ↦ %s, already exists.",
                         link_str, target_str
@@ -106,7 +106,7 @@ int main(int argc, char* argv[])
                 } else {
                     PANIC(
                         "Link %s already exists and points to %s instead of %s.",
-                        link_str, linkValue, target_str
+                        link_str, path_to_str(&linkValue), target_str
                     );
                 }
             }
