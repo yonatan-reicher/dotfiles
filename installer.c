@@ -57,7 +57,6 @@ int main(int argc, char* argv[])
     UNUSED(argc);
     UNUSED(argv);
 
-    Path cwd = path_cwd();
     Path home = path_home();
     Path link = path_empty(), target = path_empty();
     Path linkValue = path_empty();
